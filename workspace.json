@@ -3,7 +3,7 @@
   "cli": {
     "defaultCollection": "@nrwl/react"
   },
-  "defaultProject": "nx-basics",
+  "defaultProject": "ecsp-web",
   "generators": {
     "@nrwl/react": {
       "application": {
@@ -23,34 +23,44 @@
     }
   },
   "projects": {
-    "nx-basics": {
-      "root": "apps/nx-basics",
-      "sourceRoot": "apps/nx-basics/src",
+    "ecsp-web": {
+      "root": "apps/ecsp-web",
+      "sourceRoot": "apps/ecsp-web/src",
       "projectType": "application",
       "targets": {
         "build": {
-          "executor": "@nrwl/web:build",
+          "executor": "@nrwl/workspace:run-commands",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/nx-basics",
-            "index": "apps/nx-basics/src/index.html",
-            "main": "apps/nx-basics/src/main.tsx",
-            "polyfills": "apps/nx-basics/src/polyfills.ts",
-            "tsConfig": "apps/nx-basics/tsconfig.app.json",
+            "outputPath": "dist/apps/ecsp-web",
+            "index": "apps/ecsp-web/src/index.html",
+            "main": "apps/ecsp-web/src/main.tsx",
+            "polyfills": "apps/ecsp-web/src/polyfills.ts",
+            "tsConfig": "apps/ecsp-web/tsconfig.app.json",
             "assets": [
-              "apps/nx-basics/src/favicon.ico",
-              "apps/nx-basics/src/assets"
+              "apps/ecsp-web/src/favicon.ico",
+              "apps/ecsp-web/src/assets"
             ],
-            "styles": ["apps/nx-basics/src/styles.scss"],
+            "styles": [
+              "apps/ecsp-web/src/styles.css",
+              "apps/ecsp-web/src/app/tailwind.css"
+            ],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "webpackConfig": "@nrwl/react/plugins/webpack",
+            "commands": [
+              "npm run tailwind:ecsp-web:prod",
+              "nx run ecsp-web:postBuild --configuration=production"
+            ],
+            "parallel": false,
+            "maxWorkers": 2,
+            "memoryLimit": 512
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/nx-basics/src/environments/environment.ts",
-                  "with": "apps/nx-basics/src/environments/environment.prod.ts"
+                  "replace": "apps/ecsp-web/src/environments/environment.ts",
+                  "with": "apps/ecsp-web/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -70,15 +80,89 @@
             }
           }
         },
-        "serve": {
+        "postBuild": {
+          "executor": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/ecsp-web",
+            "index": "apps/ecsp-web/src/index.html",
+            "main": "apps/ecsp-web/src/main.tsx",
+            "polyfills": "apps/ecsp-web/src/polyfills.ts",
+            "tsConfig": "apps/ecsp-web/tsconfig.app.json",
+            "assets": ["apps/ecsp-web/src/assets"],
+            "styles": ["apps/ecsp-web/src/styles.scss"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/challenge/src/environments/environment.ts",
+                  "with": "apps/web/challenge/src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "apps/web/challenge/src/styles/tailwind.css",
+                  "with": "apps/web/challenge/src/styles/tailwind.prod.css"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            },
+            "development": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/web/ecsp-web/src/environments/environment.ts",
+                  "with": "apps/web/ecsp-web/src/environments/environment.dev.ts"
+                },
+                {
+                  "replace": "apps/web/ecsp-web/src/styles/tailwind.css",
+                  "with": "apps/web/ecsp-web/src/styles/tailwind.dev.css"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true
+            }
+          }
+        },
+        "postServe": {
           "executor": "@nrwl/web:dev-server",
           "options": {
-            "buildTarget": "nx-basics:build",
+            "buildTarget": "ecsp-web:postBuild",
+            "port": 4000
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "ecsp-web:postBuild:production"
+            },
+            "development": {
+              "buildTarget": "ecsp-web:postBuild:development"
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "npm run tailwind:ecsp-web:dev",
+              "nx run ecsp-web:postServe --configuration=development"
+            ],
             "hmr": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "nx-basics:build:production",
+              "buildTarget": "ecsp-web:build:production",
               "hmr": false
             }
           }
@@ -86,41 +170,63 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/nx-basics/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": ["apps/ecsp-web/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/nx-basics"],
+          "outputs": ["coverage/apps/ecsp-web"],
           "options": {
-            "jestConfig": "apps/nx-basics/jest.config.js",
+            "jestConfig": "apps/ecsp-web/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "build-tailwind-css": {
+          "executor": "@nrwl/workspace:run-commands",
+          "outputs": [],
+          "options": {
+            "command": "npx tailwindcss-cli@latest build ./src/styles.css -o src/app/tailwind.css",
+            "cwd": "apps/ecsp-web"
           }
         }
       }
     },
-    "nx-basics-e2e": {
-      "root": "apps/nx-basics-e2e",
-      "sourceRoot": "apps/nx-basics-e2e/src",
+    "ecsp-web-e2e": {
+      "root": "apps/ecsp-web-e2e",
+      "sourceRoot": "apps/ecsp-web-e2e/src",
       "projectType": "application",
       "targets": {
         "e2e": {
           "executor": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/nx-basics-e2e/cypress.json",
-            "tsConfig": "apps/nx-basics-e2e/tsconfig.e2e.json",
-            "devServerTarget": "nx-basics:serve"
+            "cypressConfig": "apps/ecsp-web-e2e/cypress.json",
+            "tsConfig": "apps/ecsp-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "ecsp-web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "nx-basics:serve:production"
+              "devServerTarget": "ecsp-web:serve:production"
             }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/nx-basics-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": ["apps/ecsp-web-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
+    "react-core": {
+      "root": "libs/react/core",
+      "sourceRoot": "libs/react/core/src",
+      "projectType": "library",
+      "generators": {},
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/react/core/**/*.{ts,tsx,js,jsx}"]
           }
         }
       }

@@ -1,3 +1,3 @@
 module.exports = {
-  projects: ['<rootDir>/apps/nx-basics'],
+  projects: [, '<rootDir>/apps/ecsp-web'],
 };
