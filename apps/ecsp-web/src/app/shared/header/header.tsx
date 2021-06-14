@@ -1,6 +1,6 @@
 import './header.module.scss';
 import { PageHeader, Button } from 'antd';
-
+import 'antd/dist/antd.css';
 /* eslint-disable-next-line */
 export interface HeaderProps {}
 
@@ -9,7 +9,6 @@ export function Header(props: HeaderProps) {
     <PageHeader
       className="w-full"
       ghost={false}
-      onBack={() => null}
       title="ECSP"
       subTitle="Empower Innovate Accelerate"
       extra={[
