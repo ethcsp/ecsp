@@ -140,7 +140,8 @@
           "executor": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "ecsp-web:postBuild",
-            "port": 4000
+            "port": 4000,
+            "host": "10.4.17.20"
           },
           "configurations": {
             "production": {
