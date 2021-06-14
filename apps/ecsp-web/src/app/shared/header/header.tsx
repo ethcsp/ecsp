@@ -1,6 +1,5 @@
 import './header.module.scss';
 import { PageHeader, Button } from 'antd';
-import 'antd/dist/antd.css';
 /* eslint-disable-next-line */
 export interface HeaderProps {}
 
@@ -18,9 +17,7 @@ export function Header(props: HeaderProps) {
           Join ECSP
         </Button>,
       ]}
-    >
-      <Button type="ghost">Ghost Button</Button>
-    </PageHeader>
+    ></PageHeader>
   );
 }
 
