@@ -6,6 +6,7 @@ import './app-routes.module.scss';
 import '../../../styles/tailwind.css';
 /* eslint-disable-next-line */
 export interface AppRoutesProps {}
+
 const GuestRoute = ({ component, ...rest }) => {
   return (
     <Route {...rest} render={() => <WebLayout>{component}</WebLayout>}></Route>
